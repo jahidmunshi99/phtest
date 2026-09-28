@@ -23,12 +23,14 @@ const Login = () => {
 
       const result = await response.json();
 
-      console.log("Response:", response);
       console.log("Result:", result);
 
-      if (response.ok) {
-        router.push("/dashboard");
+      if (!response.ok) {
+        console.error(result.message);
+        return;
       }
+
+      router.push("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
     }
