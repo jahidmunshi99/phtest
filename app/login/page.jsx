@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import usersInfo from "../../lib/usersData";
 
 const Login = () => {
   const router = useRouter();
@@ -12,18 +11,26 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const handleLogin = (data) => {
-    const currentUser = usersInfo.find(
-      (user) => user.email === data.email && user.password === data.password,
-    );
+  const handleLogin = async (data) => {
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    console.log("Login data:", data);
-    console.log("Current user:", currentUser);
-    if (currentUser) {
-      return router.push("/dashboard");
-    } else {
-      alert("Invalid email or password");
-      router.push("/login");
+      const result = await response.json();
+
+      console.log("Response:", response);
+      console.log("Result:", result);
+
+      if (response.ok) {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
     }
   };
 
